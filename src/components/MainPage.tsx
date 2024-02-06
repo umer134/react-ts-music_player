@@ -70,15 +70,16 @@ if(data ){
 
 useEffect(() => {
     setCurrentTrack(data?data[0]:null)
+    setTrackIndex(0)
 }, [data])
 
   return (
-    <div className='App'>
+    <div className='MainPage'>
         <div className='container'>
           <div className='search-block'>
-            <input type="text" value={inputValue}
+            <input type="text" className='search-inp' value={inputValue}
              onChange={(e) => handleChangeInputValue(e.target.value)} />
-            <FontAwesomeIcon icon={faSearch} onClick={handleGetSearchResult}/>
+            <FontAwesomeIcon icon={faSearch} className='search-btn' onClick={handleGetSearchResult}/>
           </div>
         </div>
       
@@ -90,9 +91,6 @@ useEffect(() => {
                  setIsPlaying={setIsPlaying}
                  data={data}
         />
-        {/* {data?.map(track => {
-          return <Playbar key={track.id} track={track}/>
-        })} */}
     </div>
   )
 }
