@@ -1,7 +1,8 @@
-import { FC, useRef, useState } from "react";
+import { FC, useRef, useState, useEffect } from "react";
 import { IData } from "./MainPage";
 import { faForward, faBackward, faPause, faPlay } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {Slider} from "@mui/material";
 
 
 interface PlaybarProps {
@@ -12,67 +13,49 @@ interface PlaybarProps {
     isPlaying: boolean
     setIsPlaying: Function
     data: IData[] | null
-    audioRef : HTMLAudioElement
 }   
-
-
-const TimeControl: FC <PlaybarProps> = ({audioRef, currentTrack}) => {
-
-    const [currentTime, setCurrentTime] = useState(0)
-    
-
-    const sliderCurrentTime = Math.round((currentTime / currentTrack?.duration) * 100)
-
-    const handleChangeCurrentTime = (_, value) => {
-    const timebar = Math.round(value / 100 * currentTrack?.duration)
-    setCurrentTime(timebar)
-    audioRef.current.currentTime = timebar
-    }
-
-    const secondsToformatTime = (duration) => {
-    duration = Number(duration)
-    let m = Math.floor(duration % 3600 / 60);
-    let s = Math.floor(duration % 3600 % 60);
-    
-    m = (m < 10 ? '0' : '') + m;
-    s = (s < 10 ? '0' : '') + s;
-    return (m + ':' + s);
-    }
-
-
-const formattedDurationTime = secondsToformatTime(currentTrack?.duration);
-const formattedCurrentTime = secondsToformatTime(currentTime);
-
-        useEffect(() => {
-            
-            const timer = setInterval(() => {
-                setCurrentTime(audioRef.current.currentTime)
-            }, 1000)
-
-            return () => {
-                clearInterval(timer)
-            }
-        }, [currentTime])
-
-    return(
-        <div className="Timer">
-            <p>{formattedCurrentTime}</p>
-            <Slider value={sliderCurrentTime}
-                onChange={handleChangeCurrentTime}
-                step={1}
-                min={0}
-                max={100}
-                className="Slider"/>
-            <p>{currentTrack ? formattedDurationTime : formattedCurrentTime}</p>
-        </div>)
-        }
-
 
 
 const Playbar: FC <PlaybarProps> = ({currentTrack, isPlaying,  trackIndex,
     setCurrentTrack, data,setIsPlaying, setTrackIndex }) => {
-
+    const [currentTime, setCurrentTime] = useState(0)
     const audioRef = useRef<HTMLAudioElement>(null)
+
+    const sliderCurrentTime = Math.round((currentTime / currentTrack?.duration) * 100)
+    
+    const handleChangeDuration = (_:any, value:any) => {
+        if(audioRef.current){
+            const timebar = Math.round(value * 100 / currentTrack?.duration)
+            setCurrentTime(timebar)
+            audioRef.current.currentTime = timebar
+        }
+    }
+
+    const secondsToFormatTime = (duration:number) => {
+        let m:number = Math.floor(duration % 3600 / 60);
+        let s:number = Math.floor(duration % 3600 % 60);
+
+        let minute:string = (m < 10 ? '0' : '') + m;
+        let second:string = (s < 10 ? '0' : '') + s;
+        
+        return (minute + ':' + second)
+    }
+
+    const formattedDurationTime = secondsToFormatTime(currentTrack?.duration)
+    const formattedCurrentTime = secondsToFormatTime(currentTime)
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            if(audioRef.current){
+                setCurrentTime(audioRef.current.currentTime)
+            }
+        }, 1000)
+
+        return () => {
+            clearInterval(timer)
+        }
+    }, [])
+
 
     const handlePlayAudio = async(currentTrack: IData) => {
         if(audioRef.current){
@@ -125,11 +108,21 @@ const Playbar: FC <PlaybarProps> = ({currentTrack, isPlaying,  trackIndex,
         <div className="PlayBar">
         <div className="track-info">
         <img width={450} height={400} src={currentTrack.album.cover_big} alt="" />
-        <p className="track-title">{currentTrack.title}</p>
+        <div className="track-name-art">
+        <p className="track-title">{currentTrack.title}.</p>
         <audio ref={audioRef} src={currentTrack.preview}/>
         <p className="track-artist">{currentTrack.artist.name}</p>
+        </div>
+        
         <div className="play-slider">
-        <TimeControl currentTrack={currentTrack} audioRef={audioRef} />
+            <p>{formattedCurrentTime}</p>
+            <Slider value={sliderCurrentTime} 
+            onChange={handleChangeDuration}
+            step={1}
+            min={0}
+            max={100}
+            className="slider-line" />
+            <p>{formattedDurationTime}</p>
         </div>
         </div>
         <div className="play-menu">
