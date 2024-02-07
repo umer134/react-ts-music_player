@@ -57,7 +57,7 @@ const Playbar: FC <PlaybarProps> = ({currentTrack, isPlaying,  trackIndex,
     }, [])
 
 
-    const handlePlayAudio = async(currentTrack: IData) => {
+    const handlePlayAudio = async() => {
         if(audioRef.current){
             if(isPlaying){
                 audioRef.current.pause()
@@ -69,8 +69,7 @@ const Playbar: FC <PlaybarProps> = ({currentTrack, isPlaying,  trackIndex,
         }
     }
 
-    const handleToNextAudio = (currentTrack1:IData) => {     
-           const nextTrack = async() => {
+    const handleToNextAudio = async(currentTrack1:IData) => {     
                 if(audioRef.current){
                 await setTrackIndex(trackIndex + 1)
                 setCurrentTrack(data![trackIndex + 1])
@@ -78,18 +77,13 @@ const Playbar: FC <PlaybarProps> = ({currentTrack, isPlaying,  trackIndex,
                 await setIsPlaying(true)
                 await audioRef.current.play()
                 }
-           }  
-            if(currentTrack1.id === currentTrack.id){
-                nextTrack()
-            }
 }
-    const handleToPreviousAudio = (currentTrack1:IData) => {     
+    const handleToPreviousAudio = async(currentTrack1:IData) => {     
         if(audioRef.current?.play()){
             setIsPlaying(true)
         }else{
             setIsPlaying(false)
         }
-           const previousTrack = async() => {
                 if(audioRef.current){
                 await setTrackIndex(trackIndex - 1)
                 setCurrentTrack(data![trackIndex - 1])
@@ -97,10 +91,6 @@ const Playbar: FC <PlaybarProps> = ({currentTrack, isPlaying,  trackIndex,
                 await setIsPlaying(true)
                 await audioRef.current.play()
                 }
-           }  
-            if(currentTrack1.id === currentTrack.id){
-                previousTrack()
-            }
 }
 
     if(!currentTrack){return <p className="trakcs-state">No Tracks yet...</p>}
@@ -129,9 +119,9 @@ const Playbar: FC <PlaybarProps> = ({currentTrack, isPlaying,  trackIndex,
         <FontAwesomeIcon icon={faBackward} className="fb-btn" onClick={() => handleToPreviousAudio(currentTrack)} />
         <br/>
         {isPlaying?
-         (<FontAwesomeIcon icon={faPause} className="ps-btn"onClick={() =>handlePlayAudio(currentTrack)}  />
+         (<FontAwesomeIcon icon={faPause} className="ps-btn"onClick={handlePlayAudio}  />
         )
-        :(<FontAwesomeIcon icon={faPlay} className="pl-btn" onClick={() => handlePlayAudio(currentTrack)} />
+        :(<FontAwesomeIcon icon={faPlay} className="pl-btn" onClick={handlePlayAudio} />
         )}<br/>
         <FontAwesomeIcon icon={faForward} className="fw-btn" onClick={() => handleToNextAudio(currentTrack)}  />
         </div>

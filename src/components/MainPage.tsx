@@ -52,8 +52,9 @@ useEffect(() => {
     .then(response => setData(response.data))
 },[search])
 
+
 useEffect(() => {
-if(data ){
+if(data){
      setCurrentTrack(data[trackIndex])
     setIsPlaying(false)
     if(trackIndex >= data.length){
