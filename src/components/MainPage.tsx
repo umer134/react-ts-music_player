@@ -79,6 +79,7 @@ useEffect(() => {
         <div className='container'>
           <div className='search-block'>
             <input type="text" className='search-inp' value={inputValue}
+		placeholder="search track"
              onChange={(e) => handleChangeInputValue(e.target.value)} />
             <FontAwesomeIcon icon={faSearch} className='search-btn' onClick={handleGetSearchResult}/>
           </div>
