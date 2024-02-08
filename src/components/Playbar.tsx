@@ -93,7 +93,7 @@ const Playbar: FC <PlaybarProps> = ({currentTrack, isPlaying,  trackIndex,
                 }
 }
 
-    if(!currentTrack){return <p className="trakcs-state">No Tracks yet...</p>}
+    if(!currentTrack){return <p className="trakcs-state"></p>}
     return ( 
         <div className="PlayBar">
         <div className="track-info">
